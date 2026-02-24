@@ -317,6 +317,18 @@
     </div>
 
     <script>
+        function sendResultToBot(score, total) {
+        if (window.Telegram && Telegram.WebApp) {
+            const data = JSON.stringify({
+                score: score,
+                total: total
+            });
+            Telegram.WebApp.sendData(data);
+            console.log("Результат отправлен в бота:", data);
+        } else {
+            console.log("Telegram WebApp не доступен");
+        }
+    }
         const questions = [
             {
                 question: "В каком году родился Михаил Врубель?",
@@ -506,12 +518,15 @@
 
         // Показать экран с результатом
         function showResult() {
-            quizArea.classList.add('hidden');
-            resultArea.classList.remove('hidden');
+        quizArea.classList.add('hidden');
+        resultArea.classList.remove('hidden');
 
-            finalScoreSpan.textContent = `${userScore}/${questions.length}`;
-            finalMessageDiv.textContent = getMessageByScore(userScore);
-        }
+        finalScoreSpan.textContent = `${userScore}/${questions.length}`;
+        finalMessageDiv.textContent = getMessageByScore(userScore);
+        
+        // Отправляем результат в бота
+        sendResultToBot(userScore, questions.length);
+    }
 
         // Рестарт викторины
         function restartQuiz() {
