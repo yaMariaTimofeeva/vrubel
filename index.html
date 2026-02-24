@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Викторина: День рождения Врубеля</title>
+    <style>
+        /* Стили в стиле "Врубель": темный фон, золото, синий, мистика */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b0c1e 0%, #1a1e30 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            color: #e8d8b5;
+        }
+
+        .app-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(10, 12, 25, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #c9a45b;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(201, 164, 91, 0.3);
+            border-radius: 24px;
+            padding: 24px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Декоративный элемент - отсылка к "Демону" */
+        .app-container::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(120, 80, 160, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        h1 {
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #f5e6c6;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #c9a45b;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 16px;
+            color: #b89e75;
+            border-bottom: 1px dashed #4a3e2b;
+            padding-bottom: 12px;
+        }
+
+        .subtitle span {
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        /* Прогресс-бар */
+        .progress-container {
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #c1a471;
+        }
+
+        .progress-bar-bg {
+            height: 6px;
+            background: #2a2438;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #b58e5a, #e9c27c);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Карточка вопроса */
+        .question-card {
+            background: rgba(20, 15, 30, 0.7);
+            border: 1px solid #4f3f28;
+            border-radius: 20px;
+            padding: 24px 18px;
+            margin-bottom: 24px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        .question-text {
+            font-size: 20px;
+            line-height: 1.4;
+            text-align: center;
+            color: #ffefd0;
+            font-weight: 500;
+        }
+
+        /* Варианты ответов */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .option-btn {
+            background: rgba(25, 20, 35, 0.9);
+            border: 1px solid #5d4b31;
+            border-radius: 40px;
+            padding: 16px 20px;
+            color: #eedbba;
+            font-size: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+            word-break: break-word;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: rgba(55, 45, 70, 0.9);
+            border-color: #b58e5a;
+            transform: scale(1.02);
+        }
+
+        .option-btn.selected {
+            background: #3a2e22;
+            border-color: #e9c27c;
+            box-shadow: 0 0 12px #e9c27c;
+            color: white;
+        }
+
+        .option-btn.correct {
+            background: #1d4a2b;
+            border-color: #6fcf97;
+            color: white;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        .option-btn.wrong {
+            background: #5c2a2a;
+            border-color: #e07c7c;
+            color: #ffcaca;
+            pointer-events: none;
+            opacity: 0.7;
+            text-decoration: line-through wavy rgba(255, 0, 0, 0.3);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Кнопка "Далее" и результаты */
+        .next-btn {
+            background: linear-gradient(135deg, #7d653a, #c9a45b);
+            border: none;
+            border-radius: 40px;
+            padding: 16px 20px;
+            width: 100%;
+            color: #0b0c1e;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 8px 0 #3f321f, 0 10px 20px rgba(0,0,0,0.4);
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .next-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #3f321f, 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .next-btn:disabled {
+            opacity: 0.3;
+            transform: translateY(0);
+            box-shadow: 0 5px 0 #3f321f;
+            pointer-events: none;
+        }
+
+        /* Блок с результатом */
+        .result-block {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 40px;
+            padding: 28px 16px;
+            border: 1px solid #c9a45b;
+            margin-top: 10px;
+        }
+
+        .result-title {
+            font-size: 28px;
+            color: #f9e7c2;
+            margin-bottom: 12px;
+        }
+
+        .result-score {
+            font-size: 56px;
+            font-weight: bold;
+            color: #d4af37;
+            text-shadow: 0 0 15px #b8860b;
+            line-height: 1.2;
+        }
+
+        .result-message {
+            font-size: 18px;
+            margin: 16px 0 24px;
+            color: #c7af87;
+            font-style: italic;
+        }
+
+        .restart-btn {
+            background: transparent;
+            border: 2px solid #c9a45b;
+            border-radius: 40px;
+            padding: 14px 28px;
+            color: #c9a45b;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+
+        .restart-btn:hover {
+            background: #c9a45b;
+            color: #0b0c1e;
+        }
+
+        .footer-note {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #5e4e36;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <h1>МИХАИЛ ВРУБЕЛЬ</h1>
+        <div class="subtitle"><span>✧ 17 марта 1856 ✧</span> <br> Викторина к дню рождения</div>
+
+        <!-- Область викторины (активная игра) -->
+        <div id="quizArea">
+            <!-- Прогресс -->
+            <div class="progress-container">
+                <div class="progress-stats">
+                    <span id="currentQuestionDisplay">1</span>/<span id="totalQuestionsDisplay">10</span>
+                    <span id="scoreDisplay">0</span> ●
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill" id="progressFill" style="width: 10%;"></div>
+                </div>
+            </div>
+
+            <!-- Вопрос -->
+            <div class="question-card">
+                <div class="question-text" id="questionText">Загрузка вопроса...</div>
+            </div>
+
+            <!-- Кнопки ответов -->
+            <div class="options-list" id="optionsContainer"></div>
+
+            <!-- Кнопка далее -->
+            <button class="next-btn" id="nextBtn" disabled>ДАЛЕЕ</button>
+        </div>
+
+        <!-- Область результата (скрыта изначально) -->
+        <div id="resultArea" class="result-block hidden">
+            <div class="result-title">Демон повержен?</div>
+            <div class="result-score" id="finalScore">0/10</div>
+            <div class="result-message" id="finalMessage">Вы прикоснулись к гениальности</div>
+            <button class="restart-btn" id="restartBtn">НАЧАТЬ СНОВА</button>
+        </div>
+
+        <div class="footer-note">* посвящается 167-летию Мастера</div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "В каком году родился Михаил Врубель?",
+                options: ["1856", "1861", "1848", "1870"],
+                correct: 0
+            },
+            {
+                question: "Какой известный демон является самой знаменитой работой Врубеля?",
+                options: ["Демон летящий", "Демон сидящий", "Демон поверженный", "Демон и Тамара"],
+                correct: 1
+            },
+            {
+                question: "В каком городе Врубель создавал свои майолики и вазы?",
+                options: ["В Москве", "В Киеве", "В Абрамцево", "В Петербурге"],
+                correct: 2
+            },
+            {
+                question: "Какая опера стала источником вдохновения для картины «Царевна-Лебедь»?",
+                options: ["«Садко»", "«Сказка о царе Салтане»", "«Руслан и Людмила»", "«Борис Годунов»"],
+                correct: 1
+            },
+            {
+                question: "Кем Врубель приходился знаменитому композитору М.А. Балакиреву?",
+                options: ["Двоюродным братом", "Никем (просто знакомый)", "Сыном", "Племянником"],
+                correct: 1  // Никем, они были знакомы, но не родственники. Можно уточнить: Врубель не был родственником.
+                // Если нужен строгий факт: Врубель и Балакирев не родственники. Ответ: "Никем".
+            },
+            {
+                question: "Какая трагедия произошла со зрением художника в конце жизни?",
+                options: ["Катаракта", "Ослеп", "Дальнозоркость", "Дальтонизм"],
+                correct: 1  // Врубель ослеп к концу жизни
+            },
+            {
+                question: "В каком художественном объединении состоял Врубель?",
+                options: ["Передвижники", "Мир искусства", "Бубновый валет", "Голубая роза"],
+                correct: 1
+            },
+            {
+                question: "Какой поэт был любимым у Врубеля, и к его произведениям он создавал иллюстрации?",
+                options: ["Пушкин", "Лермонтов", "Блок", "Некрасов"],
+                correct: 1  // Лермонтов (Демон, Герой нашего времени)
+            },
+            {
+                question: "Какая картина Врубеля находится в Третьяковской галерее и изображает девушку на фоне ковра?",
+                options: ["Гадалка", "Царевна-Лебедь", "Тамара", "Испания"],
+                correct: 0  // Гадалка
+            },
+            {
+                question: "Сколько лет было Врубелю, когда он написал первую версию «Демона сидящего»?",
+                options: ["34", "40", "28", "45"],
+                correct: 0  // 34 (1890 год, родился в 1856, значит 34)
+            }
+        ];
+
+        // DOM элементы
+        const quizArea = document.getElementById('quizArea');
+        const resultArea = document.getElementById('resultArea');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentQSpan = document.getElementById('currentQuestionDisplay');
+        const totalQSpan = document.getElementById('totalQuestionsDisplay');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const progressFill = document.getElementById('progressFill');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const finalMessageDiv = document.getElementById('finalMessage');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // Переменные состояния
+        let currentQuestionIndex = 0;
+        let userScore = 0;
+        let selectedOptionIndex = null; // индекс выбранного (или -1 если не выбрано)
+        let quizCompleted = false;
+
+        totalQSpan.textContent = questions.length;
+
+        // Сообщения по итогам
+        const resultMessages = [
+            { max: 3, text: "Кажется, вы перепутали Врубеля с Малевичем... Попробуйте ещё!" },
+            { max: 6, text: "Неплохо, но 'Демон' шепчет, что вы можете лучше." },
+            { max: 9, text: "Прекрасно! Вы знаете Врубеля почти как Третьяков." },
+            { max: 10, text: "Гениально! Ваш дух родственен демонам Врубеля!" }
+        ];
+
+        function getMessageByScore(score) {
+            for (let m of resultMessages) {
+                if (score <= m.max) return m.text;
+            }
+            return "Таинственный ответ...";
+        }
+
+        // Обновление прогресс-бара и счетчика
+        function updateProgressAndScore() {
+            currentQSpan.textContent = currentQuestionIndex + 1;
+            scoreDisplay.textContent = userScore;
+
+            const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressFill.style.width = progressPercent + '%';
+        }
+
+        // Загрузка вопроса
+        function loadQuestion() {
+            selectedOptionIndex = null;
+            const q = questions[currentQuestionIndex];
+
+            questionText.textContent = q.question;
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.dataset.index = idx;
+
+                btn.addEventListener('click', () => selectOption(idx));
+                optionsContainer.appendChild(btn);
+            });
+
+            // Сброс кнопки далее
+            nextBtn.disabled = true;
+
+            updateProgressAndScore();
+        }
+
+        // Обработка выбора ответа
+        function selectOption(clickedIdx) {
+            if (quizCompleted) return;
+            const q = questions[currentQuestionIndex];
+            const allOptions = document.querySelectorAll('.option-btn');
+
+            // Убираем выделение со всех
+            allOptions.forEach(btn => {
+                btn.classList.remove('selected', 'correct', 'wrong');
+            });
+
+            // Выделяем выбранный
+            allOptions[clickedIdx].classList.add('selected');
+            selectedOptionIndex = clickedIdx;
+
+            // Разблокируем кнопку "Далее"
+            nextBtn.disabled = false;
+        }
+
+        // Обработка нажатия "Далее" (проверка ответа и переход)
+        function handleNext() {
+            if (selectedOptionIndex === null) return; // ничего не выбрано
+
+            const q = questions[currentQuestionIndex];
+            const allOptions = document.querySelectorAll('.option-btn');
+            const isCorrect = (selectedOptionIndex === q.correct);
+
+            // Показываем правильный/неправильный ответ
+            allOptions.forEach((btn, idx) => {
+                btn.classList.remove('selected');
+                if (idx === q.correct) {
+                    btn.classList.add('correct');
+                } else if (idx === selectedOptionIndex && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+                // Блокируем все кнопки (disable)
+                btn.disabled = true;
+            });
+
+            // Если ответ правильный, увеличиваем счет
+            if (isCorrect) {
+                userScore += 1;
+                scoreDisplay.textContent = userScore;
+            }
+
+            // Блокируем кнопку "Далее" до перехода на новый вопрос
+            nextBtn.disabled = true;
+
+            // Переходим к следующему вопросу или завершаем через небольшую паузу
+            setTimeout(() => {
+                if (currentQuestionIndex + 1 < questions.length) {
+                    // Следующий вопрос
+                    currentQuestionIndex++;
+                    // разблокировать ответы загружатся новые, нужно убрать disable с кнопок.
+                    loadQuestion();
+                } else {
+                    // Конец викторины
+                    quizCompleted = true;
+                    showResult();
+                }
+            }, 800); // 0.8 сек пауза, чтобы увидеть результат
+        }
+
+        // Показать экран с результатом
+        function showResult() {
+            quizArea.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            finalScoreSpan.textContent = `${userScore}/${questions.length}`;
+            finalMessageDiv.textContent = getMessageByScore(userScore);
+        }
+
+        // Рестарт викторины
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            userScore = 0;
+            selectedOptionIndex = null;
+            quizCompleted = false;
+
+            quizArea.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+
+            // Сброс прогресс бара
+            updateProgressAndScore();
+
+            // Загружаем первый вопрос
+            loadQuestion();
+        }
+
+        // События
+        nextBtn.addEventListener('click', handleNext);
+        restartBtn.addEventListener('click', restartQuiz);
+
+        // Инициализация: загружаем первый вопрос
+        loadQuestion();
+
+    </script>
+</body>
+</html>
