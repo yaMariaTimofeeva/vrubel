@@ -104,6 +104,62 @@
             transition: width 0.3s ease;
         }
 
+        /* Галерея изображений */
+        .art-gallery {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #c9a45b #2a2438;
+            position: relative;
+            z-index: 2;
+        }
+
+        .art-gallery::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .art-gallery::-webkit-scrollbar-track {
+            background: #2a2438;
+            border-radius: 10px;
+        }
+
+        .art-gallery::-webkit-scrollbar-thumb {
+            background: #c9a45b;
+            border-radius: 10px;
+        }
+
+        .art-item {
+            min-width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #4a3e2b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .art-item:hover {
+            transform: scale(1.05);
+            border-color: #d4af37;
+            opacity: 1;
+        }
+
+        .art-item.active {
+            border-color: #d4af37;
+            box-shadow: 0 0 15px #d4af37;
+            opacity: 1;
+        }
+
+        .art-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         /* Карточка вопроса */
         .question-card {
             background: rgba(20, 15, 30, 0.7);
@@ -273,12 +329,86 @@
         .hidden {
             display: none;
         }
+
+        /* Модальное окно для просмотра картин */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            border: 3px solid #c9a45b;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #c9a45b;
+        }
+
+        .modal-close:hover {
+            background: #c9a45b;
+            color: black;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <h1>МИХАИЛ ВРУБЕЛЬ</h1>
         <div class="subtitle"><span>✧ 17 марта 1856 ✧</span> <br> Викторина к дню рождения</div>
+
+        <!-- Галерея картин -->
+        <div class="art-gallery" id="artGallery">
+            <div class="art-item active" data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Vrubel_Demon_sitting.jpg/800px-Vrubel_Demon_sitting.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Vrubel_Demon_sitting.jpg/800px-Vrubel_Demon_sitting.jpg" alt="Демон сидящий">
+            </div>
+            <div class="art-item" data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Vrubel_Tsarevna-Lebed.jpg/800px-Vrubel_Tsarevna-Lebed.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Vrubel_Tsarevna-Lebed.jpg/800px-Vrubel_Tsarevna-Lebed.jpg" alt="Царевна-Лебедь">
+            </div>
+            <div class="art-item" data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Mikhail_Vrubel_-_%D0%9F%D0%B0%D0%BD.jpg/800px-Mikhail_Vrubel_-_%D0%9F%D0%B0%D0%BD.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Mikhail_Vrubel_-_%D0%9F%D0%B0%D0%BD.jpg/800px-Mikhail_Vrubel_-_%D0%9F%D0%B0%D0%BD.jpg" alt="Пан">
+            </div>
+            <div class="art-item" data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Vrubel_Gadalka.jpg/800px-Vrubel_Gadalka.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Vrubel_Gadalka.jpg/800px-Vrubel_Gadalka.jpg" alt="Гадалка">
+            </div>
+            <div class="art-item" data-img="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Mikhail_Vrubel_-_The_Swan_Princess_-_Google_Art_Project.jpg/800px-Mikhail_Vrubel_-_The_Swan_Princess_-_Google_Art_Project.jpg">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Mikhail_Vrubel_-_The_Swan_Princess_-_Google_Art_Project.jpg/800px-Mikhail_Vrubel_-_The_Swan_Princess_-_Google_Art_Project.jpg" alt="Царевна-Лебедь">
+            </div>
+        </div>
 
         <!-- Область викторины (активная игра) -->
         <div id="quizArea">
@@ -298,7 +428,7 @@
                 <div class="question-text" id="questionText">Загрузка вопроса...</div>
             </div>
 
-            <!-- Кнопки ответов -->
+            <!-- Варианты ответов -->
             <div class="options-list" id="optionsContainer"></div>
 
             <!-- Кнопка далее -->
@@ -316,70 +446,76 @@
         <div class="footer-note">* посвящается 167-летию Мастера</div>
     </div>
 
+    <!-- Модальное окно для просмотра картин -->
+    <div class="modal" id="imageModal">
+        <div class="modal-close" id="closeModal">×</div>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Картина Врубеля">
+        </div>
+    </div>
+
     <script>
-        function sendResultToBot(score, total) {
-        if (window.Telegram && Telegram.WebApp) {
-            const data = JSON.stringify({
-                score: score,
-                total: total
-            });
-            Telegram.WebApp.sendData(data);
-            console.log("Результат отправлен в бота:", data);
-        } else {
-            console.log("Telegram WebApp не доступен");
-        }
-    }
+        // Вопросы с ссылками на изображения
         const questions = [
             {
                 question: "В каком году родился Михаил Врубель?",
                 options: ["1856", "1861", "1848", "1870"],
-                correct: 0
+                correct: 0,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Vrubel_Demon_sitting.jpg/800px-Vrubel_Demon_sitting.jpg"
             },
             {
                 question: "Какой известный демон является самой знаменитой работой Врубеля?",
                 options: ["Демон летящий", "Демон сидящий", "Демон поверженный", "Демон и Тамара"],
-                correct: 1
+                correct: 1,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Vrubel_Demon_sitting.jpg/800px-Vrubel_Demon_sitting.jpg"
             },
             {
                 question: "В каком городе Врубель создавал свои майолики и вазы?",
                 options: ["В Москве", "В Киеве", "В Абрамцево", "В Петербурге"],
-                correct: 2
+                correct: 2,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Mikhail_Vrubel_-_%D0%9F%D0%B0%D0%BD.jpg/800px-Mikhail_Vrubel_-_%D0%9F%D0%B0%D0%BD.jpg"
             },
             {
                 question: "Какая опера стала источником вдохновения для картины «Царевна-Лебедь»?",
                 options: ["«Садко»", "«Сказка о царе Салтане»", "«Руслан и Людмила»", "«Борис Годунов»"],
-                correct: 1
+                correct: 1,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Vrubel_Tsarevna-Lebed.jpg/800px-Vrubel_Tsarevna-Lebed.jpg"
             },
             {
                 question: "Кем Врубель приходился знаменитому композитору М.А. Балакиреву?",
                 options: ["Двоюродным братом", "Никем (просто знакомый)", "Сыном", "Племянником"],
-                correct: 1  // Никем, они были знакомы, но не родственники. Можно уточнить: Врубель не был родственником.
-                // Если нужен строгий факт: Врубель и Балакирев не родственники. Ответ: "Никем".
+                correct: 1,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Vrubel_Gadalka.jpg/800px-Vrubel_Gadalka.jpg"
             },
             {
                 question: "Какая трагедия произошла со зрением художника в конце жизни?",
                 options: ["Катаракта", "Ослеп", "Дальнозоркость", "Дальтонизм"],
-                correct: 1  // Врубель ослеп к концу жизни
+                correct: 1,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Mikhail_Vrubel_-_The_Swan_Princess_-_Google_Art_Project.jpg/800px-Mikhail_Vrubel_-_The_Swan_Princess_-_Google_Art_Project.jpg"
             },
             {
                 question: "В каком художественном объединении состоял Врубель?",
                 options: ["Передвижники", "Мир искусства", "Бубновый валет", "Голубая роза"],
-                correct: 1
+                correct: 1,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Vrubel_Demon_sitting.jpg/800px-Vrubel_Demon_sitting.jpg"
             },
             {
                 question: "Какой поэт был любимым у Врубеля, и к его произведениям он создавал иллюстрации?",
                 options: ["Пушкин", "Лермонтов", "Блок", "Некрасов"],
-                correct: 1  // Лермонтов (Демон, Герой нашего времени)
+                correct: 1,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Mikhail_Vrubel_-_%D0%9F%D0%B0%D0%BD.jpg/800px-Mikhail_Vrubel_-_%D0%9F%D0%B0%D0%BD.jpg"
             },
             {
                 question: "Какая картина Врубеля находится в Третьяковской галерее и изображает девушку на фоне ковра?",
                 options: ["Гадалка", "Царевна-Лебедь", "Тамара", "Испания"],
-                correct: 0  // Гадалка
+                correct: 0,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Vrubel_Gadalka.jpg/800px-Vrubel_Gadalka.jpg"
             },
             {
                 question: "Сколько лет было Врубелю, когда он написал первую версию «Демона сидящего»?",
                 options: ["34", "40", "28", "45"],
-                correct: 0  // 34 (1890 год, родился в 1856, значит 34)
+                correct: 0,
+                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Vrubel_Demon_sitting.jpg/800px-Vrubel_Demon_sitting.jpg"
             }
         ];
 
@@ -396,11 +532,16 @@
         const finalScoreSpan = document.getElementById('finalScore');
         const finalMessageDiv = document.getElementById('finalMessage');
         const restartBtn = document.getElementById('restartBtn');
+        const artGallery = document.getElementById('artGallery');
+        const artItems = document.querySelectorAll('.art-item');
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModal = document.getElementById('closeModal');
 
         // Переменные состояния
         let currentQuestionIndex = 0;
         let userScore = 0;
-        let selectedOptionIndex = null; // индекс выбранного (или -1 если не выбрано)
+        let selectedOptionIndex = null;
         let quizCompleted = false;
 
         totalQSpan.textContent = questions.length;
@@ -447,6 +588,15 @@
                 optionsContainer.appendChild(btn);
             });
 
+            // Обновляем активное изображение в галерее
+            artItems.forEach((item, index) => {
+                if (index === currentQuestionIndex % artItems.length) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
             // Сброс кнопки далее
             nextBtn.disabled = true;
 
@@ -474,7 +624,7 @@
 
         // Обработка нажатия "Далее" (проверка ответа и переход)
         function handleNext() {
-            if (selectedOptionIndex === null) return; // ничего не выбрано
+            if (selectedOptionIndex === null) return;
 
             const q = questions[currentQuestionIndex];
             const allOptions = document.querySelectorAll('.option-btn');
@@ -488,45 +638,38 @@
                 } else if (idx === selectedOptionIndex && !isCorrect) {
                     btn.classList.add('wrong');
                 }
-                // Блокируем все кнопки (disable)
                 btn.disabled = true;
             });
 
-            // Если ответ правильный, увеличиваем счет
             if (isCorrect) {
                 userScore += 1;
                 scoreDisplay.textContent = userScore;
             }
 
-            // Блокируем кнопку "Далее" до перехода на новый вопрос
             nextBtn.disabled = true;
 
-            // Переходим к следующему вопросу или завершаем через небольшую паузу
             setTimeout(() => {
                 if (currentQuestionIndex + 1 < questions.length) {
-                    // Следующий вопрос
                     currentQuestionIndex++;
-                    // разблокировать ответы загружатся новые, нужно убрать disable с кнопок.
                     loadQuestion();
                 } else {
-                    // Конец викторины
                     quizCompleted = true;
                     showResult();
                 }
-            }, 800); // 0.8 сек пауза, чтобы увидеть результат
+            }, 800);
         }
 
         // Показать экран с результатом
         function showResult() {
-        quizArea.classList.add('hidden');
-        resultArea.classList.remove('hidden');
+            quizArea.classList.add('hidden');
+            resultArea.classList.remove('hidden');
 
-        finalScoreSpan.textContent = `${userScore}/${questions.length}`;
-        finalMessageDiv.textContent = getMessageByScore(userScore);
-        
-        // Отправляем результат в бота
-        sendResultToBot(userScore, questions.length);
-    }
+            finalScoreSpan.textContent = `${userScore}/${questions.length}`;
+            finalMessageDiv.textContent = getMessageByScore(userScore);
+            
+            // Отправляем результат в бота
+            sendResultToBot(userScore, questions.length);
+        }
 
         // Рестарт викторины
         function restartQuiz() {
@@ -538,11 +681,48 @@
             quizArea.classList.remove('hidden');
             resultArea.classList.add('hidden');
 
-            // Сброс прогресс бара
             updateProgressAndScore();
-
-            // Загружаем первый вопрос
             loadQuestion();
+        }
+
+        // Функция отправки данных в Telegram бота
+        function sendResultToBot(score, total) {
+            if (window.Telegram && Telegram.WebApp) {
+                const data = JSON.stringify({
+                    score: score,
+                    total: total
+                });
+                Telegram.WebApp.sendData(data);
+                console.log("Результат отправлен в бота:", data);
+            } else {
+                console.log("Telegram WebApp не доступен");
+            }
+        }
+
+        // Обработка клика по изображению в галерее
+        artItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const imgSrc = item.dataset.img;
+                modalImage.src = imgSrc;
+                modal.classList.add('active');
+            });
+        });
+
+        // Закрытие модального окна
+        closeModal.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // Инициализация Telegram WebApp
+        if (window.Telegram && Telegram.WebApp) {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand(); // Разворачиваем на весь экран
         }
 
         // События
@@ -551,7 +731,6 @@
 
         // Инициализация: загружаем первый вопрос
         loadQuestion();
-
     </script>
 </body>
 </html>
