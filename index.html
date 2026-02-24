@@ -474,10 +474,10 @@
         <!-- Активная зона викторины -->
         <div id="quizArea">
             <div class="progress-container">
-                <div class="progress-stats">
-                    <span id="currentQuestionDisplay">1</span>/<span id="totalQuestionsDisplay">10</span>
-                    <span>⚡ <span id="scoreDisplay">0</span> баллов</span>
-                </div>
+                <div class="progress-stats" style="justify-content: flex-start; gap: 24px;">
+                <span id="currentQuestionDisplay">1</span>/<span id="totalQuestionsDisplay">10</span>
+                <span>⚡ <span id="scoreDisplay">0</span> баллов</span>
+            </div>
                 <div class="progress-bar-bg">
                     <div class="progress-fill" id="progressFill" style="width: 10%;"></div>
                 </div>
@@ -489,7 +489,7 @@
 
             <div class="options-list" id="optionsContainer"></div>
 
-            <button class="next-btn" id="nextBtn" disabled>✨ ДАЛЕЕ ✨</button>
+            <button class="next-btn" id="nextBtn" disabled> ДАЛЕЕ </button>
         </div>
 
         <!-- Результат (скрыт) -->
@@ -500,7 +500,7 @@
             <button class="restart-btn" id="restartBtn">⟲ ПРОЙТИ СНОВА</button>
         </div>
 
-        <div class="footer-note">«Демон» и «Царевна-Лебедь» — 170 лет в вечности</div>
+        <div class="footer-note">«Демон» и «Царевна-Лебедь» - 170 лет в вечности</div>
     </div>
 
     <!-- Модальное окно для картин -->
@@ -604,9 +604,9 @@
 
         const resultMessages = [
             { max: 3, text: "🧐 Врубель бы пожурил... Но с праздником!" },
-            { max: 6, text: "✧ Хорошо! Но демон хочет большего ✧" },
+            { max: 6, text: "✧ Хорошо! Но гений хочет большего ✧" },
             { max: 9, text: "Великолепно! Вы знаток серебряного века!" },
-            { max: 10, text: "Браво! Вы — мозаика врубелевского гения!" }
+            { max: 10, text: "Браво! Вы - знаток врубелевского гения!" }
         ];
 
         function getMessageByScore(score) {
